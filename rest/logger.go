@@ -10,7 +10,7 @@ import (
 
 func newGinLogger(c *gin.Context, ctx ...interface{}) log.LogRusEntry {
 	return log.Get(ctx...).
-		WithField(log.LOG_FIELD_CORRELATION_ID, getCorrelationId(c)).
+		WithField(log.LOG_FIELD_CORRELATION_ID, GetCorrelationId(c)).
 		WithField(log.LOG_FIELD_CONTROLLER, "Rest").
 		WithField(log.LOG_FIELD_HTTP_METHOD, c.Request.Method).
 		WithField(log.LOG_FIELD_HTTP_PATH, c.Request.URL.Path)
@@ -38,7 +38,7 @@ func ginLogger(c *gin.Context) log.LogRusEntry {
 	return logger.(log.LogRusEntry)
 }
 
-func getCorrelationId(c *gin.Context) string {
+func GetCorrelationId(c *gin.Context) string {
 	value := c.GetHeader(log.LOG_FIELD_CORRELATION_ID)
 
 	if len(value) == 0 {

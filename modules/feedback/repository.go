@@ -38,6 +38,5 @@ func findAll() ([]Feedback, error) {
 
 func insert(feedback Feedback) error {
 	_, err := dbCollection().InsertOne(context.TODO(), feedback)
-
 	return err
 }
