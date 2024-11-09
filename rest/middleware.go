@@ -2,6 +2,7 @@ package rest
 
 import (
 	"fernandezlautt/feedback-service/lib"
+	"fernandezlautt/feedback-service/lib/log"
 	"fernandezlautt/feedback-service/security"
 	"strings"
 
@@ -9,14 +10,14 @@ import (
 )
 
 func ProtectedMiddleware(c *gin.Context) {
-	_, err := validateToken(c)
+	user, err := validateToken(c)
 	if err != nil {
 		c.Error(err)
 		c.Abort()
 		return
 	}
-	// ctx := GinCtx(c)
-	// c.Set("logger", log.Get(ctx...).WithField(log.LOG_FIELD_USER_ID, user.ID))
+	ctx := GinCtx(c)
+	c.Set("logger", log.Get(ctx...).WithField(log.LOG_FIELD_USER_ID, user.ID))
 }
 
 // get token from Authorization header

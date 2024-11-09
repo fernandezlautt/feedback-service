@@ -3,15 +3,16 @@ package feedback
 import (
 	"context"
 	"fernandezlautt/feedback-service/db"
+	"fernandezlautt/feedback-service/lib"
 
-	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/v2/bson"
 	"go.mongodb.org/mongo-driver/v2/mongo"
+	"go.mongodb.org/mongo-driver/v2/mongo/options"
 )
 
 var collection *mongo.Collection
 
 func dbCollection() *mongo.Collection {
-
 	if collection == nil {
 		database := db.Get()
 		collection = database.Collection("feedback")
@@ -20,10 +21,11 @@ func dbCollection() *mongo.Collection {
 	return collection
 }
 
-func findAll() ([]Feedback, error) {
+func findAll(where bson.M, order bson.M, pagination *lib.Pagination) ([]Feedback, error) {
 	var feedbacks []Feedback
 
-	cursor, err := dbCollection().Find(context.TODO(), bson.M{})
+	optionsFind := options.Find().SetSort(order).SetSkip(pagination.Skip).SetLimit(pagination.Limit)
+	cursor, err := dbCollection().Find(context.TODO(), where, optionsFind)
 
 	if err != nil {
 		return nil, err

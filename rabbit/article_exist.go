@@ -8,7 +8,6 @@ import (
 
 	"github.com/gin-gonic/gin"
 	amqp "github.com/rabbitmq/amqp091-go"
-	uuid "github.com/satori/go.uuid"
 )
 
 func RpcArticleExist(ctx *gin.Context, articleID string) (*ConsumeArticleExistMessage, error) {
@@ -63,7 +62,7 @@ func RpcArticleExist(ctx *gin.Context, articleID string) (*ConsumeArticleExistMe
 		return nil, err
 	}
 
-	CorrelationId := GetCorrelationId(ctx)
+	CorrelationId := lib.GetCorrelationId(ctx)
 
 	toSend, err := json.Marshal(ArticleExistReq{
 		CorrelationId: CorrelationId,
@@ -120,10 +119,6 @@ func RpcArticleExist(ctx *gin.Context, articleID string) (*ConsumeArticleExistMe
 			log.Panic(err)
 			return nil, err
 		}
-		fmt.Println("sim")
-		fmt.Println(res.CorrelationId)
-		fmt.Println(CorrelationId)
-		fmt.Println(res.Message)
 		if res.CorrelationId != CorrelationId {
 			continue
 		}
@@ -131,14 +126,4 @@ func RpcArticleExist(ctx *gin.Context, articleID string) (*ConsumeArticleExistMe
 	}
 
 	return nil, nil
-}
-
-func GetCorrelationId(c *gin.Context) string {
-	value := c.GetHeader("correlation_id")
-
-	if len(value) == 0 {
-		value = uuid.NewV4().String()
-	}
-
-	return value
 }
