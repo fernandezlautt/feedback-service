@@ -98,7 +98,7 @@ _Response_
 ```
 
 **Deshabilitación de feedback de un artículo**
-`POST /v1/feedback/disable/{articleId}`
+`POST /v1/feedback/disable/{feedbackId}`
 
 #### Headers
 
