@@ -8,30 +8,30 @@
 ### Introducción
 
 El microservicio de User Feed permite a los usuarios del ecommerce dejar comentarios sobre los artículos que han comprado.
-Los comentarios proporcionan retroalimentación a otros usuarios sobre la experiencia de compra.
-Cada artículo puede tener múltiples comentarios de diferentes usuarios. Si un comentario es negativo (es decir, tiene una calificación baja),
-se generará una notificación asincrónica a través de RabbitMQ para que el equipo de atención al cliente envíe un email de seguimiento.
+Los comentarios proporcionan retroalimentación a otros usuarios.
+Cada artículo puede tener múltiples comentarios de diferentes usuarios.
+Se pueden deshabilitar los comentarios de un artículo si se considera necesario.
 
 ### Lenguaje
 
 - Go
-- TypeScript
 
 ## Casos de uso
 
 ### CU: Crear Feedback
 
 - Se valida que el usuario haya comprado el artículo antes de dejar un comentario.
-- Cualquier usuario autenticado que haya comprado el artículo puede dejar un comentario.
+- Cualquier usuario autenticado puede dejar un comentario.
 
 ### CU: Consultar Feedback
 
 - Se listan los comentarios de un artículo específico mediante su ID.
 - Los comentarios incluyen información sobre el usuario y la calificación del artículo.
 
-### CU: Notificar Feedback Negativo
+### CU: Deshabitación de Feedback
 
-- Si el comentario incluye una calificación baja, se emite un mensaje de notificación a través de RabbitMQ para activar un envío de email de seguimiento.
+- Se deshabilita el feedback por la razón que se especifique.
+
 
 ## Modelo de datos
 
@@ -39,15 +39,11 @@ se generará una notificación asincrónica a través de RabbitMQ para que el eq
 
 - id: ObjectId
 - articleId: string
-- customerName: String
-- feedbackInfo: String
+- customerName: string
+- feedbackInfo: string
 - rating: number (de 1 a 5)
-- creationDate: Date
-
-**Notification**
-
-- id: ObjectId
-- feedbackId: string
+- status: string
+- reason: string
 - creationDate: Date
 
 ## Interfaz REST
@@ -65,7 +61,6 @@ _Body_
 
 ```json
 {
-	"userId": {"id del usuario que genera el feedback"},
 	"feedbackInfo": {"comentario del usuario"},
 	"rating": {"calificación del artículo (1-5)"}
 }
@@ -88,14 +83,40 @@ _Response_
 
 ```json
 [
-      {
-            "customerName": {"customerName"},
-            "feedbackInfo": {"comentario del usuario"},
-            "rating": {"calificación"},
-            "creationDate": {"creationDate"}
-      }
+    {
+        "id": "ID del feedback",
+        "articleId": "ID del artículo",
+        "customerName": "Nombre del cliente",
+        "customerId": "ID del cliente",
+        "feedbackInfo": "Información del feedback",
+        "rating": "Calificación del artículo (1-5)",
+        "creationDate": "Fecha de creación del feedback",
+        "status": "Estado del feedback",
+        "reason": "Razón del estado del feedback"
+    }
 ]
 ```
+
+**Deshabilitación de feedback de un artículo**
+`POST /v1/feedback/disable/{articleId}`
+
+#### Headers
+
+| Cabecera                  | Contenido            |
+| ------------------------- | -------------------- |
+| Authorization: Bearer xxx | Token en formato JWT |
+
+_Body_
+
+```json
+{
+	"reason": "Razón de la deshabilitación"
+}
+```
+
+_Response_
+`200 OK` si el feedback fue deshabilitado con éxito | `400 BAD REQUEST`
+
 
 ## Interfaz asincrónica (RabbitMQ)
 
@@ -103,10 +124,6 @@ _Response_
 
 - Envía una solicitud de verificación de existencia del artículo, devolviendo si existe o no.
 
-* Escucha de mensajes article-exist \*
+- Escucha de mensajes catalog_article_exist_receive
 
-* Envía mensaje a catalog para comprobar que existe un artículo\*
-
-**Notificación de feedback negativo**
-
-- Envía notificación de feedback negativo si el rating es bajo (1 o 2) a Mail Notifications Service\*
+- Actualiza el estado del feedback a "confirmed"
