@@ -14,6 +14,7 @@ func getAllFeedbacksController(c *gin.Context) {
 	page, _ := strconv.Atoi(c.DefaultQuery("page", "1"))
 	size, _ := strconv.Atoi(c.DefaultQuery("size", "10"))
 
+	// service
 	res, err := findFeedbacks(articleId, page, size)
 
 	if err != nil {
@@ -33,11 +34,12 @@ func createFeedbackController(c *gin.Context) {
 	}
 
 	articleId := c.Param("articleId")
-	// get user and take the name
 	user_rec, _ := c.Get("user")
-	user, _ := user_rec.(security.User)
 
-	err := createFeedback(c, feedbackDto, user.Name, articleId)
+	// type assertion
+	user, _ := user_rec.(security.User)
+	// service
+	err := createFeedback(c, feedbackDto, &user, articleId)
 
 	if err != nil {
 		lib.AbortWithError(c, err)
@@ -49,8 +51,33 @@ func createFeedbackController(c *gin.Context) {
 	})
 }
 
+func disableFeedbackController(c *gin.Context) {
+	feedbackId := c.Param("feedbackId")
+
+	var disableFeedbackDto DisableFeedbackDto
+
+	if err := c.ShouldBindJSON(&disableFeedbackDto); err != nil {
+		lib.AbortWithError(c, err)
+		return
+	}
+
+	// service
+	err := disableFeedback(feedbackId, disableFeedbackDto.Reason)
+
+	if err != nil {
+		lib.AbortWithError(c, err)
+		return
+	}
+
+	c.JSON(200, gin.H{
+		"message": "Feedback disabled",
+	})
+}
+
+// as the router is a reference to the main gin.RouterGroup, we can modify it directly witoout returning anything
 func FeedbackController(router *gin.RouterGroup) {
-	group := router.Group("/feedback/:articleId")
-	group.GET("", getAllFeedbacksController)
-	group.POST("", createFeedbackController)
+	group := router.Group("/feedback")
+	group.GET("/:articleId", getAllFeedbacksController)
+	group.POST("/:articleId", createFeedbackController)
+	group.POST("/disable/:feedbackId", disableFeedbackController)
 }

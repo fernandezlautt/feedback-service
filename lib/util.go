@@ -20,6 +20,11 @@ func GetCorrelationId(c *gin.Context) string {
 	return value
 }
 
+type Pagination struct {
+	Skip  int64
+	Limit int64
+}
+
 func GetPagination(page int, size int) *Pagination {
 	if page < 1 {
 		page = 1
@@ -33,9 +38,4 @@ func GetPagination(page int, size int) *Pagination {
 		Skip:  int64((page - 1) * size),
 		Limit: int64(size),
 	}
-}
-
-type Pagination struct {
-	Skip  int64
-	Limit int64
 }

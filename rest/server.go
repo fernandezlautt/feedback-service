@@ -31,7 +31,6 @@ func createServer(ctx ...interface{}) {
 
 	server.Use(ErrorHandler)
 	// server.GET("/docs/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
-
 }
 
 func getServer() *gin.Engine {
