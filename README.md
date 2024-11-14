@@ -26,11 +26,15 @@ Se pueden deshabilitar los comentarios de un artículo si se considera necesario
 - Se puede calificar el artículo con un número del 1 al 5.
 - Se valida que el articulo exista, por lo tanto se establece en pending el estado del feedback hasta que `cataloggo` responda.
 - Se guarda el userId (para implementacion de notificación) y el nombre del usuario que dejo el comentario para poder mostrarlo en la interfaz.
+- Se puede comentar un artículo mas de una vez.
 
 ### CU: Consultar Feedback
 
 - Se listan los comentarios de un artículo específico mediante su ID )enviado por query param).
 - Los comentarios incluyen el nombre del usuario, el comentario, la calificación del artículo y demas datos del artículo.
+- Los artículos devueltos son solo los que tienen estado "confirmed".
+- Se puede paginar los resultados.
+- Se ordenan los comentarios por fecha de creación.
 
 ### CU: Deshabitación de Feedback
 
