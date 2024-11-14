@@ -87,6 +87,10 @@ func ArticleExistConsume() {
 			continue
 		}
 		fmt.Printf("Received a message to update feedback: %s\n", res.CorrelationId)
-		feedback.ConfirmFeedback(res.CorrelationId)
+		if res.Message.Valid {
+			feedback.ConfirmFeedback(res.CorrelationId)
+		} else {
+			feedback.DisableFeedback(res.CorrelationId, "Articulo inexistente")
+		}
 	}
 }

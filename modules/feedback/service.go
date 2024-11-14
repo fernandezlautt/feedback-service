@@ -54,6 +54,6 @@ func ConfirmFeedback(feedbackId string) error {
 	return update(feedbackId, bson.M{"status": "confirmed"})
 }
 
-func disableFeedback(feedbackId string, reason string) error {
+func DisableFeedback(feedbackId string, reason string) error {
 	return update(feedbackId, bson.M{"status": "disabled", "reason": reason})
 }

@@ -67,7 +67,7 @@ func disableFeedbackController(c *gin.Context) {
 	}
 
 	// service
-	err := disableFeedback(feedbackId, disableFeedbackDto.Reason)
+	err := DisableFeedback(feedbackId, disableFeedbackDto.Reason)
 
 	if err != nil {
 		lib.AbortWithError(c, err)
