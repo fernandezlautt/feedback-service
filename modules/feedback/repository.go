@@ -4,7 +4,6 @@ import (
 	"context"
 	"fernandezlautt/feedback-service/db"
 	"fernandezlautt/feedback-service/lib"
-	"fmt"
 
 	"go.mongodb.org/mongo-driver/v2/bson"
 	"go.mongodb.org/mongo-driver/v2/mongo"
@@ -62,6 +61,5 @@ func update(feedbackId string, update bson.M) error {
 	where := bson.M{"_id": oid}
 	updateQuery := bson.M{"$set": update}
 	_, err = dbCollection().UpdateOne(context.TODO(), where, updateQuery)
-	fmt.Println("congratsssss")
 	return err
 }

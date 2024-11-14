@@ -16,6 +16,8 @@ var InternalError = NewRestError(500, "Internal server error")
 
 var InvalidError = NewRestError(400, "Invalid Document")
 
+var ArticleIdRequired = NewRestError(400, "Article ID is required")
+
 // - Creación de errors -
 // NewRestError creates a new errCustom
 func NewRestError(status int, message string) RestError {

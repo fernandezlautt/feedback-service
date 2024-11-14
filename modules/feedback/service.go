@@ -19,11 +19,14 @@ func findFeedbacks(articleId string, page int, size int) ([]Feedback, error) {
 	return findAll(findWhere, findOrder, pagination)
 }
 
-func createFeedback(ctx *gin.Context, feedbackDto CreateFeedbackDto, user *security.User, articleId string) error {
+func createFeedback(ctx *gin.Context, feedbackDto CreateFeedbackDto, user *security.User) error {
+	if feedbackDto.ArticleId == "" {
+		return lib.ArticleIdRequired
+	}
 
 	res, err := insert(Feedback{
 		ID:           bson.NewObjectID(),
-		ArticleId:    articleId,
+		ArticleId:    feedbackDto.ArticleId,
 		CustomerName: user.Name,
 		CustomerId:   user.ID,
 		FeedbackInfo: feedbackDto.FeedbackInfo,
@@ -32,15 +35,13 @@ func createFeedback(ctx *gin.Context, feedbackDto CreateFeedbackDto, user *secur
 		Status:       "pending",
 	})
 
-	fmt.Println(res)
-
 	if err != nil {
 		return err
 	}
 
 	feedbackId := res.InsertedID.(bson.ObjectID).Hex()
 
-	err = rabbit.SendArticleExist(ctx, articleId, feedbackId)
+	err = rabbit.SendArticleExist(ctx, feedbackDto.ArticleId, feedbackId)
 
 	if err != nil {
 		return err

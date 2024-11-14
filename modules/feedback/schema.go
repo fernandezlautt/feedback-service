@@ -21,6 +21,7 @@ type Feedback struct {
 type CreateFeedbackDto struct {
 	FeedbackInfo string `bson:"feedbackInfo" json:"feedbackInfo" validate:"required,min=1,max=100"`
 	Rating       int    `bson:"rating" json:"rating" validate:"required,min=1,max=5"`
+	ArticleId    string `bson:"articleId" json:"articleId" validate:"required,min=1,max=100"`
 }
 
 type GetFeedbackDto struct {
