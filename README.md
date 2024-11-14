@@ -30,7 +30,7 @@ Se pueden deshabilitar los comentarios de un artículo si se considera necesario
 
 ### CU: Consultar Feedback
 
-- Se listan los comentarios de un artículo específico mediante su ID )enviado por query param).
+- Se listan los comentarios de un artículo específico mediante su ID (enviado por query param).
 - Los comentarios incluyen el nombre del usuario, el comentario, la calificación del artículo y demas datos del artículo.
 - Los artículos devueltos son solo los que tienen estado "confirmed".
 - Se puede paginar los resultados.
@@ -70,9 +70,9 @@ _Body_
 
 ```json
 {
-	"feedbackInfo": {"comentario del usuario"},
-	"rating": {"calificación del artículo (1-5)"},
-	"articleId": {"ID del artículo a comentar"}
+	"feedbackInfo": "comentario del usuario",
+	"rating": "calificación del artículo (1-5)",
+	"articleId": "ID del artículo a comentar"
 }
 ```
 
